@@ -20,7 +20,7 @@ checkForUpdates: true
 # Set the language to any code found in the "lang" folder (don't add the .yml extension)
 # You can add your own language files. Use https://github.com/KartoffelChipss/LifeStealZ/tree/main/src/main/resources/lang/en-US.yml as a template
 # If you want to help translating the plugin, please refer to this article: https://lsz.strassburger.dev/contributing/localization
-#  | en-US | de-DE | es-ES | fr-FR | cs-CZ | vi-VN | zh-CN | pl-PL | nl-NL | ru-RU
+#  | en-US | de-DE | es-ES | fr-FR | cs-CZ | vi-VN | zh-CN | pl-PL | nl-NL | ru-RU | it-IT | tr-TR |
 lang: "en-US"
 
 # === WORLD SETTINGS ===
@@ -144,6 +144,23 @@ reviveuseCommands:
 reviveStartCommands:
 # - "broadcast &player& started reviving &target& at &location&"
 
+
+# Whether a custom Bossbar should appear when the revival process starts.
+showBossbar: false
+
+# The Title of the Bossbar
+# Placeholders: &target&, &remainingD&, &remainingH&, &remainingM&, &remainingS&, &location&, &locationX&, &locationY&, &locationZ&
+# Can be found in your lang file under "reviveBossbarTitle"
+
+# The Color of the Bossbar itself.
+# Available Options: BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
+bossbarColor: RED
+
+# The Style of the Bossbar.
+# Available Options: SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+bossbarStyle: SOLID
+
+# Grace periods are per player and start when a player joins the server for the first time.
 gracePeriod:
   # If a grace period should be enabled
   enabled: false
@@ -164,6 +181,8 @@ gracePeriod:
   looseHearts: false
   # Should a player be able to gain hearts during the grace period
   gainHearts: false
+  # Should players be allowed to withdraw hearts during the grace period
+  allowWithdraw: false
 
   # Custom commands to be executed when the grace period starts
   startCommands:
@@ -172,6 +191,22 @@ gracePeriod:
   # Custom commands to be executed when the grace period ends
   endCommands:
     # - "say The grace period for &player& has ended"
+
+# This section enables a permission-based bypass similar to the grace period.
+# The bypass permission is "lifestealz.bypass" and is not granted by default, even not to ops.
+bypassPermission:
+  # If the bypass permission feature should be enabled
+  enabled: true
+  # Should a player be able to take damage from players with bypass permission
+  damageFromPlayers: false
+  # Should a player be able to deal damage to players with bypass permission
+  damageToPlayers: false
+  # Should a player be able to use hearts with bypass permission
+  useHearts: false
+  # Should a player be able to lose hearts with bypass permission (if set to false, the killer will also not gain a heart)
+  looseHearts: false
+  # Should a player be able to gain hearts with bypass permission (if set to false, the victim will also not lose a heart)
+  gainHearts: false
 
 heartGainCooldown:
   # A cooldown for how often people can gain a heart.

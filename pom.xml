@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.strassburger</groupId>
+    <groupId>com.zetaplugins</groupId>
     <artifactId>lifestealz</artifactId>
-    <version>2.17.1</version>
+    <version>2.20.7</version>
     <packaging>jar</packaging>
 
     <name>LifeStealZ</name>
 
     <description>LifeStealZ - The Ultimate LifeSteal SMP Plugin!</description>
-    <url>https://github.com/KartoffelChipss/LifeStealZ</url>
+    <url>https://github.com/ZetaPlugins/LifeStealZ</url>
 
     <licenses>
         <license>
             <name>GNU General Public License v3.0</name>
-            <url>https://github.com/KartoffelChipss/LifeStealZ/blob/main/LICENSE</url>
+            <url>https://github.com/ZetaPlugins/LifeStealZ/blob/main/LICENSE</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -32,13 +32,13 @@
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/KartoffelChipss/LifeStealZ/issues</url>
+        <url>https://github.com/ZetaPlugins/LifeStealZ/issues</url>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/KartoffelChipss/LifeStealZ</url>
-        <connection>scm:git:git://github.com/KartoffelChipss/LifeStealZ.git</connection>
-        <developerConnection>scm:git:ssh://github.com/KartoffelChipss/LifeStealZ.git</developerConnection>
+        <url>https://github.com/ZetaPlugins/LifeStealZ</url>
+        <connection>scm:git:git://github.com/ZetaPlugins/LifeStealZ.git</connection>
+        <developerConnection>scm:git:ssh://github.com/ZetaPlugins/LifeStealZ.git</developerConnection>
     </scm>
 
     <properties>
@@ -46,13 +46,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gpg.skip>true</gpg.skip>
     </properties>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/KartoffelChipss/LifeStealZ</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <plugins>
@@ -110,26 +103,44 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.reflections</pattern>
+                            <shadedPattern>com.zetaplugins.lifestealz.libs.reflections</shadedPattern>
+                        </relocation>
+                    </relocations>
                     <filters>
                         <filter>
-                            <artifact>com.zaxxer:HikariCP</artifact> <!-- Include only HikariCP -->
+                            <artifact>com.zaxxer:HikariCP</artifact>
                             <includes>
                                 <include>**/*</include>
                             </includes>
                         </filter>
+                        <filter>
+                            <artifact>com.zetaplugins:zetacore</artifact>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
                     </filters>
                     <artifactSet>
                         <includes>
-                            <include>com.zaxxer:HikariCP</include> <!-- Include HikariCP dependency -->
+                            <include>com.zaxxer:HikariCP</include>
+                            <include>com.zetaplugins:zetacore</include>
                         </includes>
                     </artifactSet>
                     <transformers>
-                        <transformer
-                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                        <transformer
-                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>org.strassburger.lifestealz.LifeStealZ</mainClass> <!-- Set
-                            your main class if needed -->
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>com.zetaplugins.lifestealz.LifeStealZ</mainClass>
                         </transformer>
                     </transformers>
                 </configuration>
@@ -164,7 +175,10 @@
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
-
+        <repository>
+            <id>zetaplugins</id>
+            <url>https://maven.zetaplugins.com/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -172,6 +186,11 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>6.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zetaplugins</groupId>
+            <artifactId>zetacore</artifactId>
+            <version>1.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
@@ -213,15 +232,21 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.geysermc.geyser</groupId>
+            <groupId>org.geysermc.floodgate</groupId>
             <artifactId>api</artifactId>
-            <version>2.7.1-SNAPSHOT</version>
+            <version>2.2.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.34</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

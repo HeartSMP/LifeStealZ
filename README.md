@@ -8,8 +8,8 @@
 [![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/available/modrinth_vector.svg)](https://modrinth.com/plugin/lifestealz)
 [![hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/available/hangar_vector.svg)](https://hangar.papermc.io/KartoffelChipss/LifestealZ)
 [![discord-plural](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/social/discord-plural_vector.svg)](https://strassburger.org/discord)
-[![gitbook](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/documentation/gitbook_vector.svg)](https://wiki.lifestealz.com/)
-[![generic-plural](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/translate/generic-plural_vector.svg)](https://gitlocalize.com/repo/9581)
+[![gitbook](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/documentation/gitbook_vector.svg)](https://docs.zetaplugins.com/lifestealz)
+[![generic-plural](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/translate/generic-plural_vector.svg)](https://gitlocalize.com/repo/10381)
 [![website](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/documentation/website_vector.svg)](https://lifestealz.com)
 
 LifeStealZ is a lifesteal SMP plugin, that allows you to steal hearts from other players, when you kill them. If a player has no more hearts, he is eliminated. You can craft additional hearts or a revive crystal. With this crystal, you can bring back eliminated teammates.
@@ -66,11 +66,14 @@ LifeStealZ offers a great amount of admin tools and is highly customizable. You 
 - **lifestealz.admin.eliminate** - Allows to eliminate players with the `/eliminate` command
 - **lifestealz.admin.revive** - Allow a player to revive another player with the `/revive` command
 - **lifestealz.bypassrevivelimit** - Allow a player to bypass the revive limit
+- **lifestealz.bypass** - Prevent heart loss/drops/rewards on death (default: false)
+- **lifestealz.bypass.check** - Check bypass status for yourself and other players (default: op)
 - **lifestealz.withdraw** - Allow a player to withdraw hearts (true by default)
 - **lifestealz.revive** - Allow a player to revive others with a revive crystal (true by default)
 - **lifestealz.viewrecipes** - Allow a player to view the custom recipes (true by default)
 - **lifestealz.help** - Allow a player to access the help menu (true by default)
 - **lifestealz.viewhearts** - Allow a player to view the amount of hearts (`/hearts`) he has (true by default)
+- **lifestealz.maxhearts.[amount]** - Set the max hearts for a player. This overwrites the maxHearts in the config
 
 <br>
 
@@ -213,6 +216,22 @@ reviveuseCommands:
 reviveStartCommands:
 # - "broadcast &player& started reviving &target& at &location&"
 
+
+# Whether a custom Bossbar should appear when the revival process starts.
+showBossbar: false
+
+# The Title of the Bossbar
+# Placeholders: &target&, &remainingD&, &remainingH&, &remainingM&, &remainingS&, &location&, &locationX&, &locationY&, &locationZ&
+# Can be found in your lang file under "reviveBossbarTitle"
+
+# The Color of the Bossbar itself.
+# Available Options: BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
+bossbarColor: RED
+
+# The Style of the Bossbar.
+# Available Options: SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+bossbarStyle: SOLID
+
 gracePeriod:
   # If a grace period should be enabled
   enabled: false
@@ -236,11 +255,27 @@ gracePeriod:
 
   # Custom commands to be executed when the grace period starts
   startCommands:
-    # - "say The grace period for &player& has started"
+  # - "say The grace period for &player& has started"
 
   # Custom commands to be executed when the grace period ends
   endCommands:
-    # - "say The grace period for &player& has ended"
+  # - "say The grace period for &player& has ended"
+
+# This section enables a permission-based bypass similar to the grace period.
+# The bypass permission is "lifestealz.bypass" and is not granted by default, even not to ops.
+bypassPermission:
+  # If the bypass permission feature should be enabled
+  enabled: true
+  # Should a player be able to take damage from players with bypass permission
+  damageFromPlayers: false
+  # Should a player be able to deal damage to players with bypass permission
+  damageToPlayers: false
+  # Should a player be able to use hearts with bypass permission
+  useHearts: false
+  # Should a player be able to lose hearts with bypass permission (if set to false, the killer will also not gain a heart)
+  looseHearts: false
+  # Should a player be able to gain hearts with bypass permission (if set to false, the victim will also not lose a heart)
+  gainHearts: false
 
 heartGainCooldown:
   # A cooldown for how often people can gain a heart.
@@ -264,8 +299,8 @@ antiAlt:
   # Add custom comamnds, to be executed when a possible alt kill attempt is detected
   # You can use &player& to insert the player name (commands are executed for both players)
   commands:
-    # - "say Please don't kill alts"
-    # - "ban &player& 1h"
+  # - "say Please don't kill alts"
+  # - "ban &player& 1h"
 
 webhook:
   # If a webhook should be sent, when a player is eliminated
@@ -317,12 +352,15 @@ defaultheart: # <- This is the item id that can be used in recipes and for permi
   material: "NETHER_STAR"
   # If set to true, the enchant glint will be applied to the item
   enchanted: false
-  # Custom item type for the item. You can use:
+  # The custom model data of the item (set to 0 for no custom model data)
+  # When using Minecraft 1.21.4 or newer, items also have a "minecraft:custom_model_data" property of "lifestealz_{itemId}"
+  customModelId: 0
+    # Custom item type for the item. You can use:
     # - "heart" for a heart item
     # - "revive" for a revive item
     # - "revivebeacon" for a revive beacon item -> This item must actually be a beacon to work!
     # - "none" for a custom item that can be used for crafting and can be used as a normal item (e.g. if it is an enderpearl it still can be thrown)
-    # - "non-usable" for a custom item that can be used for crafting and cannot be used as a normal item (e.g. if it is an enderpearl it cannot be thrown)
+  # - "non-usable" for a custom item that can be used for crafting and cannot be used as a normal item (e.g. if it is an enderpearl it cannot be thrown)
   customItemType: "heart"
   # --- Heart Item Settings --- (only relevant if customItemType is "heart")
   # When customItemType is "heart", this value is used to determine how many hearts the item gives
@@ -377,8 +415,9 @@ revive:
   # The material has to be a beacon if customItemType is "revivebeacon"
   material: "BEACON"
   enchanted: true
+  customModelId: 0
   customItemType: "revivebeacon"
-  # --- Revive Beacon Settings --- (only relevant if customItemType is "revivebeacon")
+  # --- Revive Beacon specific Settings --- (only relevant if customItemType is "revivebeacon")
   # The time in seconds it takes to revive a player
   reviveTime: 30
   # If players should be able to break the beacon while reviving, interrupting the revive process
@@ -398,7 +437,7 @@ revive:
   # The color of the particle ring
   # possible values: WHITE, GRAY, RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, PINK
   particleColor: "RED"
-  # --- End of Revive Beacon Settings ---
+  # --- End of Revive Beacon specific Settings ---
   requirePermission: false # (lifestealz.item.revive)
   craftable: true
   recipes:
@@ -458,7 +497,7 @@ If you are using [PlaceholderAPI](https://www.spigotmc.org/resources/placeholder
 
 ![PlaceholderBanner](https://strassburger.org/img/lifestealz/banner_support.png)
 
-If you need help with the setup of the plugin, or found a bug, you can join my discord [here](https://discord.com/invite/Cc76tYwXvy).
+If you need help with the setup of the plugin, or found a bug, you can join my discord [here](https://strassburger.org/discord).
 
 [![discord-plural](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/social/discord-plural_vector.svg)](https://strassburger.org/discord)
 
