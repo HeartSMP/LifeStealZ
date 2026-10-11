@@ -1,0 +1,38 @@
+name: Autobuild release
+
+# Every push to main builds the plugin and publishes the jar as a rolling pre-release
+# ("latest-main") so AutoUpdatePlugins can pick it up. Pre-releases do not trigger publish.yml.
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn -B -U -C clean package -DskipTests
+
+      - name: Publish rolling pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          JAR=$(ls target/lifestealz-*.jar | grep -v original- | head -n 1)
+          gh release delete latest-main --cleanup-tag --yes || true
+          gh release create latest-main "$JAR" \
+            --target "$GITHUB_SHA" \
+            --title "LifeStealZ (main) build ${{ github.run_number }}" \
+            --notes "Automatic build of commit $GITHUB_SHA." \
+            --prerelease
