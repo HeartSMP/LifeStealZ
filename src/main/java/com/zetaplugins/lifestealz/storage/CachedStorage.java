@@ -42,6 +42,11 @@ public class CachedStorage extends Storage {
     }
 
     @Override
+    public PlayerData loadByUsername(String username) {
+        return delegate.loadByUsername(username);
+    }
+
+    @Override
     public void save(PlayerData playerData) {
         delegate.save(playerData);
         try {
