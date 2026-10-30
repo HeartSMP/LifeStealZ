@@ -29,7 +29,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          JAR=$(ls target/lifestealz-*.jar | grep -v original- | head -n 1)
+          JAR=$(ls target/lifestealz-*.jar | grep -v -E 'original-|-sources|-javadoc' | head -n 1)
+          test -n "$JAR" || { echo "No plugin jar found"; ls -l target; exit 1; }
+          echo "Publishing $JAR"
           gh release delete latest-main --cleanup-tag --yes || true
           gh release create latest-main "$JAR" \
             --target "$GITHUB_SHA" \
